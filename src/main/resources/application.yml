@@ -1,0 +1,17 @@
+spring:
+  batch:
+    jdbc:
+      initialize-schema: always
+  application:
+    name: task-demo
+  datasource:
+    url: jdbc:mysql://localhost:33080/task
+    username: root
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: mysql
+    show-sql: true
+    databasePlatform: org.hibernate.dialect.MySQL5InnoDBDialect

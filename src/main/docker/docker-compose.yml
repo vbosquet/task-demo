@@ -1,0 +1,10 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:5.7.25
+    container_name: task-mysql
+    environment:
+      MYSQL_DATABASE: task
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - 33080:3306
