@@ -16,7 +16,6 @@ public class BookService {
     public Book save() {
         Book book = new Book();
         book.setTitle("Test");
-        book.setAuthor("Test");
         return bookRepository.save(book);
     }
 }

@@ -1,11 +1,20 @@
 package org.altissia.vbosquet.taskdemo.config;
 
+import org.altissia.vbosquet.taskdemo.job.book.BookProcessor;
+import org.altissia.vbosquet.taskdemo.job.book.BookWriter;
+import org.altissia.vbosquet.taskdemo.model.Book;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Arrays;
 
 @Configuration
 public class JobConfiguration {
@@ -20,13 +29,28 @@ public class JobConfiguration {
     }
 
     @Bean
-    public Job job() {
-        return jobBuilderFactory.get("job")
-                .start(stepBuilderFactory.get("step1")
-                        .tasklet((contribution, chunkContext) -> {
-                            System.out.println("Step 1");
-                            return RepeatStatus.FINISHED;
-                        }).build())
+    public Job bookJob(ItemProcessor<String, Book> itemProcessor, ItemWriter<Book> itemWriter) {
+        Step step = stepBuilderFactory.get("BookProcessing")
+                .<String, Book>chunk(1)
+                .reader(new ListItemReader<>(Arrays.asList("7",
+                        "2", "3", "10", "5", "6")))
+                .processor(itemProcessor)
+                .writer(itemWriter)
                 .build();
+
+        return jobBuilderFactory.get("BookJob")
+                .incrementer(new RunIdIncrementer())
+                .start(step)
+                .build();
+    }
+
+    @Bean
+    ItemProcessor<String, Book> itemProcessor() {
+        return new BookProcessor();
+    }
+
+    @Bean
+    ItemWriter<Book> itemWriter() {
+        return new BookWriter();
     }
 }

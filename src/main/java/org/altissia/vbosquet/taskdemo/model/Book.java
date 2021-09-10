@@ -1,7 +1,6 @@
 package org.altissia.vbosquet.taskdemo.model;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Table(name = "book")
 @Entity
@@ -14,8 +13,8 @@ public class Book {
     @Column(nullable = false, unique = true)
     private String title;
 
-    @Column(nullable = false)
-    private String author;
+    @Column(name = "author_id")
+    private Long author_id;
 
     public Book() {
     }
@@ -36,24 +35,12 @@ public class Book {
         this.title = title;
     }
 
-    public String getAuthor() {
-        return author;
+    public Long getAuthor_id() {
+        return author_id;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Book book = (Book) o;
-
-        if (id != book.id) return false;
-        if (!Objects.equals(title, book.title)) return false;
-        return Objects.equals(author, book.author);
+    public void setAuthor_id(Long author_id) {
+        this.author_id = author_id;
     }
 
     @Override
@@ -61,7 +48,7 @@ public class Book {
         return "Book{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", author='" + author + '\'' +
+                ", author_id='" + author_id + '\'' +
                 '}';
     }
 }
