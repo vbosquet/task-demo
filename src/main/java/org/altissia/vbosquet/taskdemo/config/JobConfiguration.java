@@ -1,7 +1,10 @@
 package org.altissia.vbosquet.taskdemo.config;
 
+import com.thedeanda.lorem.Lorem;
+import com.thedeanda.lorem.LoremIpsum;
 import org.altissia.vbosquet.taskdemo.job.book.BookProcessor;
 import org.altissia.vbosquet.taskdemo.job.book.BookWriter;
+import org.altissia.vbosquet.taskdemo.job.book.ListBookReader;
 import org.altissia.vbosquet.taskdemo.model.Book;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -14,7 +17,7 @@ import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 public class JobConfiguration {
@@ -29,11 +32,10 @@ public class JobConfiguration {
     }
 
     @Bean
-    public Job bookJob(ItemProcessor<String, Book> itemProcessor, ItemWriter<Book> itemWriter) {
+    public Job bookJob(List<String> itemReader, ItemProcessor<String, Book> itemProcessor, ItemWriter<Book> itemWriter) {
         Step step = stepBuilderFactory.get("BookProcessing")
                 .<String, Book>chunk(1)
-                .reader(new ListItemReader<>(Arrays.asList("7",
-                        "2", "3", "10", "5", "6")))
+                .reader(new ListItemReader<>(itemReader))
                 .processor(itemProcessor)
                 .writer(itemWriter)
                 .build();
@@ -52,5 +54,10 @@ public class JobConfiguration {
     @Bean
     ItemWriter<Book> itemWriter() {
         return new BookWriter();
+    }
+
+    @Bean
+    List<String> itemReader() throws Exception {
+        return new ListBookReader().read();
     }
 }
